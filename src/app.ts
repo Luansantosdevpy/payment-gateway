@@ -5,12 +5,12 @@ import { Server } from 'http';
 import { createLogger } from './utils/logger';
 import routes from './routes/routes';
 
-const logger = createLogger("App");
+const logger = createLogger('App');
 
 export default class App {
   public express: express.Application = express();
 
-  private server: Server;
+  private server!: Server;
 
   public initialize = async (): Promise<void> => {
     await this.middlewares();
@@ -19,7 +19,7 @@ export default class App {
 
   public start = (port: number, appName: string): void => {
     this.server = this.express.listen(port, '0.0.0.0', () => {
-        logger.info(`${appName} listening on port ${port}!`);
+      logger.info(`${appName} listening on port ${port}!`);
     });
   };
 
@@ -33,8 +33,8 @@ export default class App {
       cors({
         origin: '*',
         methods: 'POST, GET, PUT, OPTIONS, PATCH, DELETE',
-        exposedHeaders: 'X-file-name'
-      })
+        exposedHeaders: 'X-file-name',
+      }),
     );
     this.express.use(cors());
   };
