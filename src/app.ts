@@ -2,10 +2,9 @@ import 'reflect-metadata';
 import cors from 'cors';
 import express from 'express';
 import { Server } from 'http';
-import { createLogger } from './utils/logger';
 import routes from './routes/routes';
-
-const logger = createLogger('App');
+import errorMiddleware from './middlewares/errorMiddleware';
+import Logger from './utils/logger/logger';
 
 export default class App {
   public express: express.Application = express();
@@ -19,7 +18,7 @@ export default class App {
 
   public start = (port: number, appName: string): void => {
     this.server = this.express.listen(port, '0.0.0.0', () => {
-      logger.info(`${appName} listening on port ${port}!`);
+      Logger.info(`${appName} listening on port ${port}!`);
     });
   };
 
@@ -41,5 +40,7 @@ export default class App {
 
   private routes = async (): Promise<void> => {
     this.express.use(await routes());
+
+    this.express.use(errorMiddleware);
   };
 }
