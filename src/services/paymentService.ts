@@ -1,24 +1,19 @@
 import InstantPayment from '../interfaces/instantPaymentPix';
 import PixTransaction from '../interfaces/instantPaymentPixResponse';
 import PaymentData from '../interfaces/paymentRequestInterface';
-import { HttpClient, createHttpClient } from '../utils/httpClient';
+import { createHttpClient } from '../utils/authClient';
 import Logger from '../utils/logger/logger';
 
 export class PaymentService {
   private baseURL: string;
-  private token: string;
 
   constructor() {
-    this.baseURL = process.env.BASE_URL || '';
-    this.token = process.env.TOKEN || '';
-  }
-
-  private createHttpClient(): HttpClient {
-    return new HttpClient(this.baseURL, this.token);
+    this.baseURL = process.env.URL_CLIENT || '';
   }
 
   public async createPayment(data: Partial<PaymentData>): Promise<any> {
-    const httpClient = this.createHttpClient();
+    const httpClient = await createHttpClient(this.baseURL);
+
     const response = await httpClient.post('/payments', data);
     return response.data;
   }
@@ -29,9 +24,7 @@ export class PaymentService {
     Logger.debug(
       'PaymentService - createInstantPayment - generate http client',
     );
-    const url = process.env.EFI_URL!;
-
-    const httpClient = await createHttpClient(url);
+    const httpClient = await createHttpClient(this.baseURL);
 
     Logger.debug(
       'PaymentService - createInstantPayment - Calling external service',
