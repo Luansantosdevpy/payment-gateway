@@ -1,10 +1,10 @@
 import { Router } from 'express';
-import v1 from './v1/v1';
+import payment from './payment';
 
 export default async (): Promise<Router> => {
   const router = Router();
 
-  router.use(await v1());
-
+  router.use('/v1', router);
+  router.use('/payment', await payment());
   return router;
 };

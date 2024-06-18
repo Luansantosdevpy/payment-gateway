@@ -1,6 +1,7 @@
+import InstantPayment from '../interfaces/instantPaymentPix';
 import PixTransaction from '../interfaces/instantPaymentPixResponse';
 import PaymentData from '../interfaces/paymentRequestInterface';
-import { HttpClient } from '../utils/httpClient';
+import { HttpClient, createHttpClient } from '../utils/httpClient';
 import Logger from '../utils/logger/logger';
 
 export class PaymentService {
@@ -23,17 +24,20 @@ export class PaymentService {
   }
 
   public async createInstantPayment(
-    data: Partial<PaymentData>,
+    data: Partial<InstantPayment>,
   ): Promise<PixTransaction> {
     Logger.debug(
       'PaymentService - createInstantPayment - generate http client',
     );
-    const httpClient = this.createHttpClient();
+    const url = process.env.EFI_URL!;
+
+    const httpClient = await createHttpClient(url);
 
     Logger.debug(
       'PaymentService - createInstantPayment - Calling external service',
     );
     const response = await httpClient.post('/v2/cob', data);
+
     return response.data;
   }
 }
