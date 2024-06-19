@@ -27,7 +27,6 @@ export class HttpClient {
   }
 
   public async post(url: string, data: any): Promise<any> {
-    console.log(data);
     return this.client.post(url, data);
   }
 

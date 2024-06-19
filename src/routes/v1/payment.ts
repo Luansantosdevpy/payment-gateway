@@ -10,6 +10,7 @@ export default async (): Promise<Router> => {
     '/create-instant-payment',
     paymentController.createInstantPayment,
   );
+  router.get('/get-payments-in-period', paymentController.getAllPayments);
 
   return router;
 };

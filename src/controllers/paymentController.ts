@@ -2,6 +2,11 @@ import { Request, Response, NextFunction } from 'express';
 import { PaymentService } from '../services/paymentService';
 import Logger from '../utils/logger/logger';
 
+interface RequestQuery {
+  initialDate: Date;
+  endDate: Date;
+}
+
 export class PaymentController {
   private paymentService: PaymentService;
 
@@ -42,6 +47,37 @@ export class PaymentController {
     } catch (error) {
       Logger.error(
         'PaymentController - createInstantPayment - Error to create payment',
+      );
+      next(error);
+    }
+  };
+
+  public getAllPayments = async (
+    req: Request<RequestQuery>,
+    res: Response,
+    next: NextFunction,
+  ) => {
+    const { initialDate, endDate } = req.query as unknown as RequestQuery;
+    try {
+      Logger.debug(
+        'PaymentController - createInstantPayment - calling paymentService.createInstantPayment',
+      );
+
+      const initialDateObj = new Date(initialDate);
+      const endDateObj = new Date(endDate);
+
+      if (isNaN(initialDateObj.getTime()) || isNaN(endDateObj.getTime())) {
+        throw new Error('Invalid date format');
+      }
+
+      const result = await this.paymentService.getAllPayments(
+        initialDateObj,
+        endDateObj,
+      );
+      res.status(200).json(result);
+    } catch (error) {
+      Logger.error(
+        'PaymentController - createInstantPayment - Error to get payment',
       );
       next(error);
     }

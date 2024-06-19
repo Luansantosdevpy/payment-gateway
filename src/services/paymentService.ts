@@ -33,4 +33,29 @@ export class PaymentService {
 
     return response.data;
   }
+
+  public async getAllPayments(
+    initialDate: Date,
+    endDate: Date,
+  ): Promise<PixTransaction> {
+    Logger.debug(
+      'PaymentService - getAllPayments - generate http client with auth',
+    );
+    const httpClient = await createHttpClient(this.baseURL);
+
+    Logger.debug(
+      'PaymentService - createInstantPayment - Calling external service',
+    );
+
+    const formattedInitialDate = initialDate
+      .toISOString()
+      .replace('.000Z', 'Z');
+    const formattedEndDate = endDate.toISOString().replace('.000Z', 'Z');
+
+    const url = `/v2/cob?inicio=${formattedInitialDate}&fim=${formattedEndDate}`;
+
+    const response = await httpClient.get(url);
+
+    return response.data;
+  }
 }
