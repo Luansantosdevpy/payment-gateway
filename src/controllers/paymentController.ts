@@ -1,6 +1,7 @@
 import { Request, Response, NextFunction } from 'express';
 import { PaymentService } from '../services/paymentService';
 import Logger from '../utils/logger/logger';
+import { handleServiceError } from '../utils/handleServiceError';
 
 interface RequestQuery {
   initialDate: Date;
@@ -24,7 +25,11 @@ export class PaymentController {
       const result = await this.paymentService.createPayment(paymentData);
       res.status(201).json(result);
     } catch (error) {
-      next(error);
+      Logger.error(
+        'PaymentController - createPayment - Error creating payment',
+        error,
+      );
+      handleServiceError(res, error);
     }
   };
 
@@ -47,8 +52,9 @@ export class PaymentController {
     } catch (error) {
       Logger.error(
         'PaymentController - createInstantPayment - Error to create payment',
+        error,
       );
-      next(error);
+      handleServiceError(res, error);
     }
   };
 
@@ -60,7 +66,7 @@ export class PaymentController {
     const { initialDate, endDate } = req.query as unknown as RequestQuery;
     try {
       Logger.debug(
-        'PaymentController - createInstantPayment - calling paymentService.createInstantPayment',
+        'PaymentController - getAllPayments - calling paymentService.getAllPayments',
       );
 
       const initialDateObj = new Date(initialDate);
@@ -77,9 +83,10 @@ export class PaymentController {
       res.status(200).json(result);
     } catch (error) {
       Logger.error(
-        'PaymentController - createInstantPayment - Error to get payment',
+        'PaymentController - getAllPayments - Error to get payments',
+        error,
       );
-      next(error);
+      handleServiceError(res, error);
     }
   };
 }
